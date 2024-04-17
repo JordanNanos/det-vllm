@@ -1,7 +1,7 @@
 description: vllm-mistral
 bind_mounts:
   - container_path: /root/.cache/huggingface
-    host_path: /root/.cache/huggingface
+    host_path: /home/ubuntu/.determined/huggingface
     propagation: rprivate
     read_only: false
   #- container_path: /run/determined/workdir

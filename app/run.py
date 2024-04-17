@@ -8,7 +8,7 @@ MISTRAL = "mistralai/Mistral-7B-Instruct-v0.2"
 MIX = "mistralai/Mixtral-8x7B-Instruct-v0.1"
 MIX_AWQ = "TheBloke/Nous-Hermes-2-Mixtral-8x7B-SFT-AWQ"
 
-model_id=MIX_AWQ
+model_id=MISTRAL
 
 temperature=0.25
 
@@ -22,9 +22,10 @@ article = " <p>"
 
 
 # Gradio function upon submit
-def predict(prompt, temperature, model_id):
+#def predict(prompt, temperature, model_id):
+def predict(prompt):
     
-    
+    '''
     if model_id=="mistralai/Mistral-7B-Instruct-v0.2":
         # Connect to vLLM using openai client
         client = OpenAI(
@@ -37,6 +38,12 @@ def predict(prompt, temperature, model_id):
             base_url="http://localhost:8002/v1",
             api_key="token-abc123",
         )
+    '''
+    # Connect to vLLM using openai client
+    client = OpenAI(
+            base_url="http://localhost:8001/v1",
+            api_key="token-abc123",
+        )
     
     history_openai_format = []
     #for human, assistant in history:
@@ -47,7 +54,7 @@ def predict(prompt, temperature, model_id):
     response = client.chat.completions.create(
         model=model_id,
         messages= history_openai_format,
-        temperature=temperature,
+        #temperature=temperature,
         stream=True
         )
 
@@ -63,16 +70,16 @@ demo = gr.Interface(
                    #fn=predict, 
                    inputs=[
                             gr.Textbox(label="Prompt", placeholder="select an Example to submit"),
-                            gr.Slider(label="Temperature", minimum=0.0, maximum=1.0, value=temperature),
-                            gr.Dropdown(label="Model", 
-                                        choices=[
-                                            "NousResearch/Llama-2-7b-chat-hf",
-                                            "mistralai/Mistral-7B-Instruct-v0.2",
-                                            "mistralai/Mixtral-8x7B-Instruct-v0.1",
-                                            "TheBloke/Nous-Hermes-2-Mixtral-8x7B-SFT-AWQ"
-                                        ],
-                                        value=model_id
-                                        )
+                            #gr.Slider(label="Temperature", minimum=0.0, maximum=1.0, value=temperature),
+                            #gr.Dropdown(label="Model", 
+                            #            choices=[
+                            #                "NousResearch/Llama-2-7b-chat-hf",
+                            #                "mistralai/Mistral-7B-Instruct-v0.2",
+                            #                "mistralai/Mixtral-8x7B-Instruct-v0.1",
+                            #                "TheBloke/Nous-Hermes-2-Mixtral-8x7B-SFT-AWQ"
+                            #            ],
+                            #            value=model_id
+                            #            )
                             ],
                    outputs=[
                             #gr.Textbox(label="Guarded Response"),
@@ -83,14 +90,18 @@ demo = gr.Interface(
                    allow_flagging="never", 
                    #multimodal=True,
                    
-                   theme='upsatwal/mlsc_tiet', # Dark theme large fonts  huggingface hosted
+                   #theme='upsatwal/mlsc_tiet', # Dark theme large fonts  huggingface hosted
+                   #theme='NoCrypt/miku', # waifu lol
+                   theme='gradio/default',
+                   
                    examples=[
                               ["Tell me about HPE!"],
-                              ["What is the ProLiant DL380A Gen11?"],
-                              ["Explain what the Apollo 6500 server is"],
-                              ["When did you first learn about RAG?"],
-                              ["Write me a poem about GPU performance"],
-                              ["Do you think Stuart Russell come to HPE Tech Con again next year?"],
+                              ["Is there anything for me to do in this email thread? My name is "],
+                              ["Provide a summary of the following text: "],
+                              ["Explain this code file: "],
+                              ["Help me write a short blog post about the following topic"],
+                              #["Write me a poem about GPU performance"],
+                              #["Do you think Stuart Russell come to HPE Tech Con again next year?"],
 
                             ],
                     article=article, # HTML to display under the Example prompt buttons
@@ -99,7 +110,7 @@ demo = gr.Interface(
                    )
 
 # this binds to all interfaces which is needed for proxy forwarding
-demo.launch(server_name="0.0.0.0", server_port=443)
+demo.launch(share=False, server_name="0.0.0.0", server_port=7860)
 #demo.launch(server_name="10.14.56.23", server_port=7866)
 
 

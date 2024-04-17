@@ -7,5 +7,4 @@ WORKDIR /app
 
 COPY run.py .
 
-EXPOSE 7866
 CMD ["python", "-u", "run.py"]

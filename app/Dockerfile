@@ -7,5 +7,4 @@ WORKDIR /app
 
 COPY run.py .
 
-EXPOSE 443
 CMD ["python", "run.py"]
